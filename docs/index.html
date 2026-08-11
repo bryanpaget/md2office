@@ -349,6 +349,93 @@
   @media (max-width: 640px) {
     .hero-shot { height: 240px; }
   }
+
+  /* before / after showcase */
+  .compare {
+    display: grid;
+    grid-template-columns: 1fr 44px 1fr;
+    align-items: stretch;
+    margin-top: 10px;
+  }
+  .cmp-panel {
+    background: var(--panel);
+    border: 1px solid var(--panel-border);
+    border-radius: 14px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+  .cmp-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 9px 16px;
+    border-bottom: 1px solid var(--panel-border);
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    color: var(--muted);
+    letter-spacing: 0.04em;
+  }
+  .cmp-panel pre {
+    margin: 0;
+    padding: 18px 20px;
+    background: var(--code-bg);
+    font-size: 0.78rem;
+    line-height: 1.6;
+    flex: 1;
+  }
+  .cmp-arrow {
+    align-self: center;
+    text-align: center;
+    color: var(--accent);
+    font-size: 1.6rem;
+    font-weight: 700;
+  }
+  .doc-page {
+    margin: 20px;
+    padding: 26px 32px 22px;
+    background: #fbfcfe;
+    border-radius: 8px;
+    color: #222b3d;
+    box-shadow: 0 26px 60px rgba(0,0,0,0.5), 0 6px 18px rgba(0,0,0,0.35);
+    font-family: "Calibri", "Carlito", "Segoe UI", system-ui, sans-serif;
+    line-height: 1.6;
+  }
+  .doc-head {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.6rem;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+    color: #8a92a5;
+    border-bottom: 1px solid #e2e6ee;
+    padding-bottom: 9px;
+    margin-bottom: 18px;
+  }
+  .doc-h {
+    font-size: 1.06rem;
+    font-weight: 700;
+    color: #0f1522;
+    margin: 0 0 14px;
+    letter-spacing: 0.01em;
+  }
+  .doc-quote { font-style: italic; color: #2c3550; font-size: 0.9rem; }
+  .doc-quote p { margin: 0 0 13px; }
+  .doc-sal { font-weight: 600; }
+  .doc-sig { margin-top: 16px; }
+  .doc-foot {
+    margin-top: 20px;
+    border-top: 1px solid #e2e6ee;
+    padding-top: 9px;
+    font-size: 0.6rem;
+    color: #8a92a5;
+    text-align: center;
+    letter-spacing: 0.08em;
+  }
+  @media (max-width: 860px) {
+    .compare { grid-template-columns: 1fr; }
+    .cmp-arrow { transform: rotate(90deg); padding: 8px 0; }
+  }
 </style>
 </head>
 <body>
@@ -358,6 +445,7 @@
 <nav class="wrap">
   <a class="brand" href="#top"><span class="mark">m</span> md2office</a>
   <div class="links">
+    <a href="#showcase">Showcase</a>
     <a href="#features">Features</a>
     <a href="#how">How it works</a>
     <a href="#quickstart">Quick start</a>
@@ -397,6 +485,61 @@
     </div>
   </div>
 </header>
+<section id="showcase">
+  <div class="wrap">
+    <h2>Markdown in. <span class="grad">A manuscript</span> out.</h2>
+    <p class="section-lead">The opening letter from the bundled sample — <em>Wuthering Hall</em> (<code class="inline">examples/sample.md</code>). Plain blockquote Markdown on the left; the same words, typeset by md2office on the right.</p>
+    <div class="compare">
+      <div class="cmp-panel">
+        <div class="cmp-head"><span>chapter-iii.md</span><span class="dots"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span></span></div>
+<pre><span class="c">&gt;</span> <span class="o">*</span>To Mr. Gabriel Lockwood, at Wuthering Hall, greetings.<span class="o">*</span>
+<span class="c">&gt;</span>
+<span class="c">&gt;</span> <span class="o">*</span>You will have heard my name spoken in this house in the manner in which one
+<span class="c">&gt;</span> names a plague that has been contained. I am told you are a man of law, and
+<span class="c">&gt;</span> therefore of accuracy, and therefore of use. I write to correct a legal
+<span class="c">&gt;</span> error before it is committed, for I have some regard for the forms, and a
+<span class="c">&gt;</span> will is a form, and a signature is a form, and the dead, my dear clerk, are
+<span class="c">&gt;</span> the most punctilious of all litigants.<span class="o">*</span>
+<span class="c">&gt;</span>
+<span class="c">&gt;</span> <span class="o">*</span>Wuthering Hall is not Catherine&#x27;s. It was never Catherine&#x27;s. It was built by
+<span class="c">&gt;</span> a foundling who had no name and took the name of the house that would not
+<span class="c">&gt;</span> have him, and it passes, by rights older than your king, to the blood that
+<span class="c">&gt;</span> paid for it in the manner that blood is truly paid. I enclose no documents.
+<span class="c">&gt;</span> The documents you will find persuasive are inscribed elsewhere — in the
+<span class="c">&gt;</span> ledger of a physician who has lately left his post, and in the memory of a
+<span class="c">&gt;</span> housekeeper who is better at keeping than at speaking.<span class="o">*</span>
+<span class="c">&gt;</span>
+<span class="c">&gt;</span> <span class="o">*</span>You are advised to leave the fell before the winter closes it. The winter
+<span class="c">&gt;</span> here is not the winter of your southern counties. It is a season with a
+<span class="c">&gt;</span> memory, and the memory is long, and I am the memory of it.<span class="o">*</span>
+<span class="c">&gt;</span>
+<span class="c">&gt;</span> <span class="o">*</span>I will call upon the Hall at the hour that suits me. I do not knock. I am
+<span class="c">&gt;</span> received.<span class="o">*</span>
+<span class="c">&gt;</span>
+<span class="c">&gt;</span> <span class="o">*</span>Yours, in the old style,<span class="o">*</span>
+<span class="c">&gt;</span> <span class="o">*</span>D.<span class="o">*</span></pre>
+      </div>
+      <div class="cmp-arrow">&rarr;</div>
+      <div class="cmp-panel doc-panel">
+        <div class="cmp-head"><span>rendered &middot; docx &amp; pdf</span><span class="dot g"></span></div>
+        <div class="doc-page">
+          <div class="doc-head"><span>Wuthering Hall</span><span>Chapter III</span></div>
+          <h3 class="doc-h">A Letter, Delivered by Hand</h3>
+          <div class="doc-quote">
+            <p class="doc-sal">To Mr. Gabriel Lockwood, at Wuthering Hall, greetings.</p>
+            <p>You will have heard my name spoken in this house in the manner in which one names a plague that has been contained. I am told you are a man of law, and therefore of accuracy, and therefore of use. I write to correct a legal error before it is committed, for I have some regard for the forms, and a will is a form, and a signature is a form, and the dead, my dear clerk, are the most punctilious of all litigants.</p>
+            <p>Wuthering Hall is not Catherine&#x27;s. It was never Catherine&#x27;s. It was built by a foundling who had no name and took the name of the house that would not have him, and it passes, by rights older than your king, to the blood that paid for it in the manner that blood is truly paid. I enclose no documents. The documents you will find persuasive are inscribed elsewhere — in the ledger of a physician who has lately left his post, and in the memory of a housekeeper who is better at keeping than at speaking.</p>
+            <p>You are advised to leave the fell before the winter closes it. The winter here is not the winter of your southern counties. It is a season with a memory, and the memory is long, and I am the memory of it.</p>
+            <p>I will call upon the Hall at the hour that suits me. I do not knock. I am received.</p>
+            <p class="doc-sig">Yours, in the old style,<br>D.</p>
+          </div>
+          <div class="doc-foot">page 8</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
 
 <section id="features">
   <div class="wrap">
