@@ -361,6 +361,7 @@
     <a href="#features">Features</a>
     <a href="#how">How it works</a>
     <a href="#quickstart">Quick start</a>
+    <a href="#structure">Project structure</a>
     <a href="#options">Options</a>
     <a href="#api">Library</a>
   </div>
@@ -484,6 +485,73 @@ md2office pdf  report.md report.pdf
     </div>
 
     <p class="section-lead" style="margin-top:28px">The title defaults to your YAML frontmatter, and the classification to <code class="inline">Unclassified | Non classifié</code>.</p>
+  </div>
+</section>
+
+<section id="structure">
+  <div class="wrap">
+    <h2>Project structure</h2>
+    <p class="section-lead">One Markdown file becomes one document. Keep everything a document needs in a single folder, and point md2office at the master file.</p>
+
+    <div class="code-block">
+      <div class="code-head"><span>project layout</span><span class="dots"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span></span></div>
+<pre>docs/
+  report.md        <span class="c"># master document</span>
+  chapter-2.md     <span class="c"># optional: long sections as separate files</span>
+  images/
+    diagram.png
+output/            <span class="c"># generated files (gitignore this)</span>
+  report.docx
+  report.pdf
+</pre>
+    </div>
+
+    <div class="code-block">
+      <div class="code-head"><span>report.md</span><span class="dots"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span></span></div>
+<pre><span class="c">---</span>
+<span class="n">title</span>: <span class="s">Developer Guide</span>
+<span class="n">author</span>: <span class="s">Platform Team</span>
+<span class="n">version</span>: <span class="s">1.2.0</span>
+<span class="c">---</span>
+
+<span class="k">#</span> Overview
+
+Reference images relative to this file:
+![Architecture](images/diagram.png)
+</pre>
+    </div>
+
+    <div class="grid">
+      <div class="card">
+        <span class="icon">📁</span>
+        <h3>One folder per document</h3>
+        <p>Images and attachments resolve relative to the Markdown file's folder, which is automatically on pandoc's resource path. Add more with <code class="inline">-r &lt;dir&gt;</code>.</p>
+      </div>
+      <div class="card">
+        <span class="icon">🏷️</span>
+        <h3>Frontmatter drives the header</h3>
+        <p>The <code class="inline">title:</code>, <code class="inline">classification:</code>, author, and version in YAML frontmatter are written into the page headers and cover metadata.</p>
+      </div>
+      <div class="card">
+        <span class="icon">⚡</span>
+        <h3>Code, styled for free</h3>
+        <p>Fenced code blocks get monospace 9pt and shading automatically. Mermaid blocks (```mermaid) render when <code class="inline">mmdc</code> is installed.</p>
+      </div>
+      <div class="card">
+        <span class="icon">📑</span>
+        <h3>TOC &amp; page breaks</h3>
+        <p>A static table of contents is inserted at the top. Drop a <code class="inline">\newpage</code>, or pass <code class="inline">--page-breaks sections</code> to start each Heading1 on a new page.</p>
+      </div>
+    </div>
+
+    <div class="code-block">
+      <div class="code-head"><span>convert</span><span class="dots"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span></span></div>
+<pre><span class="n">cd</span> docs
+<span class="n">md2office</span> <span class="k">pdf</span> report.md ../output/report.pdf
+</pre>
+    </div>
+
+    <p class="section-lead" style="margin-top:24px">Multi-chapter books: md2office doesn't assemble multiple files. Keep one master file per document, or combine chapters first (e.g. <code class="inline">cat chapters/*.md &gt; book.md</code>) and convert once.</p>
   </div>
 </section>
 

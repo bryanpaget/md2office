@@ -24,6 +24,59 @@ Run `md2office doctor` to check everything.
 pip install -e .
 ```
 
+## Getting started
+
+md2office converts **one Markdown file into one document**. Keep everything a
+document needs in a single folder and point md2office at the master file:
+
+```
+docs/
+  report.md          # master document (frontmatter + chapters/sections)
+  chapter-2.md       # optional: keep long sections as separate files
+  images/
+    diagram.png
+output/              # generated files (gitignore this)
+  report.docx
+  report.pdf
+```
+
+Rules of thumb:
+
+- **One folder per document.** Images and attachments are resolved relative to
+  the Markdown file's folder, which is automatically on pandoc's resource
+  path. Extra folders can be added with `-r <dir>` (CLI) or
+  `resource_path=[...]` (library).
+- **Set the title in YAML frontmatter** at the top of the master file. It is
+  written into the page headers, cover, and core metadata:
+
+  ```
+  ---
+  title: Developer Guide
+  author: Platform Team
+  version: 1.2.0
+  effective_date: 2026-01-15
+  classification: Unclassified | Non classifié
+  ---
+  ```
+
+- **Reference images with relative paths**, e.g. `![Architecture](images/diagram.png)`.
+- **Fenced code blocks** are styled automatically (monospace, 9pt, shaded).
+  Mermaid blocks (```` ```mermaid ````) are rendered when `mmdc` is installed.
+- **A static table of contents** is inserted at the top of every document.
+  Drop a `\newpage` to force a page break, or use `--page-breaks sections`
+  to start each Heading1 on a new page.
+
+Convert:
+
+```
+cd docs
+md2office pdf report.md ../output/report.pdf
+```
+
+> **Multi-chapter books:** md2office does not assemble multiple files. Either
+> keep one master file per document, or combine chapters first (a small build
+> script or `cat chapters/*.md > book.md`) and convert the result once.
+
 ## Usage
 
 ### CLI
