@@ -1,0 +1,29 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "md2office"
+version = "0.1.0"
+description = "SSC-styled Markdown to DOCX/PDF conversion engine (pandoc + LibreOffice)"
+readme = "README.md"
+requires-python = ">=3.9"
+license = { text = "MIT" }
+keywords = ["markdown", "docx", "pdf", "pandoc", "libreoffice", "ssc"]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Operating System :: OS Independent",
+]
+dependencies = [
+    "python-docx>=0.8.11",
+]
+
+[project.scripts]
+md2office = "md2office.cli:main"
+
+[tool.setuptools]
+package-dir = { "" = "src" }
+packages = ["md2office"]
+
+[tool.setuptools.package-data]
+md2office = ["assets/*"]
