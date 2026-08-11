@@ -1,6 +1,6 @@
-"""SSC-styled Markdown to DOCX/PDF conversion engine.
+"""Markdown to DOCX/PDF conversion engine.
 
-The engine bundles the pandoc filters, the SSC reference template, and the
+The engine bundles the pandoc filters, a reference Word template, and the
 DOCX post-processing steps (header injection, table fixes, code styling) so a
 single import can turn Markdown into a formatted Word document or PDF.
 

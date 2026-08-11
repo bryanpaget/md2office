@@ -1,6 +1,6 @@
-"""Post-process a pandoc-generated DOCX to match SSC book output.
+"""Post-process a pandoc-generated DOCX into a publication-ready document.
 
-Applied after pandoc emits the DOCX (with the SSC reference template):
+Applied after pandoc emits the DOCX (with the reference template):
 
 1. Header injection — title + bilingual classification in every page header
    (and in the docProps/core.xml title).  Replaces the template's
@@ -501,7 +501,7 @@ def apply(
     page_breaks: str = "none",
     font: str = "default",
 ) -> None:
-    """Apply the full SSC post-processing pass to a pandoc-generated DOCX."""
+    """Apply the full post-processing pass to a pandoc-generated DOCX."""
     path = Path(docx)
     _rewrite_zip(path, {"code_style": code_style, "page_breaks": page_breaks,
                         "font": font})

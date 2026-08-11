@@ -42,7 +42,7 @@ def _add_shared_options(parser: argparse.ArgumentParser) -> None:
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         prog="md2office",
-        description="Convert Markdown to SSC-styled DOCX/PDF via pandoc + LibreOffice.",
+        description="Convert Markdown to a polished DOCX/PDF via pandoc + LibreOffice.",
     )
     parser.add_argument("--version", action="version", version=f"%(prog)s {__version__}")
     sub = parser.add_subparsers(dest="command", required=True)

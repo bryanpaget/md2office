@@ -5,11 +5,11 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "md2office"
 version = "0.1.0"
-description = "SSC-styled Markdown to DOCX/PDF conversion engine (pandoc + LibreOffice)"
+description = "Markdown to polished DOCX/PDF conversion engine (pandoc + LibreOffice)"
 readme = "README.md"
 requires-python = ">=3.9"
 license = { text = "MIT" }
-keywords = ["markdown", "docx", "pdf", "pandoc", "libreoffice", "ssc"]
+keywords = ["markdown", "docx", "pdf", "pandoc", "libreoffice"]
 classifiers = [
     "Programming Language :: Python :: 3",
     "Operating System :: OS Independent",

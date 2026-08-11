@@ -1,8 +1,8 @@
 """High-level Markdown -> DOCX -> PDF conversion engine.
 
-Wraps pandoc (Markdown -> DOCX with the bundled SSC template and Lua filters)
-and LibreOffice (DOCX -> PDF), then post-processes the DOCX so the output
-matches the SSC book build: title + classification in the headers, wide
+Wraps pandoc (Markdown -> DOCX with the bundled reference template and Lua
+filters) and LibreOffice (DOCX -> PDF), then post-processes the DOCX so the
+output is publication-ready: title + classification in the headers, wide
 autofit tables, monospace shaded code blocks, and a static table of contents.
 """
 
@@ -25,7 +25,7 @@ VERSION = __version__
 DEFAULT_CLASSIFICATION = "Unclassified | Non classifié"
 
 ASSETS = Path(__file__).parent / "assets"
-TEMPLATE = ASSETS / "ssc-template-v2.7.dotx"
+TEMPLATE = ASSETS / "reference.dotx"
 FILTER_PAGEBREAK = ASSETS / "pagebreak.lua"
 FILTER_TOC = ASSETS / "toc.lua"
 FILTER_MERMAID = ASSETS / "mermaid.lua"
@@ -137,7 +137,7 @@ def to_docx(
     *,
     options: Optional[ConvertOptions] = None,
 ) -> str:
-    """Convert a Markdown file to a formatted DOCX using the SSC template.
+    """Convert a Markdown file to a formatted DOCX using the reference template.
 
     Returns the path to the generated .docx.
     """

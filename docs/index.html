@@ -3,8 +3,11 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>md2office — Markdown to SSC-styled DOCX &amp; PDF</title>
-<meta name="description" content="Convert Markdown to SSC-styled DOCX and PDF with pandoc, a bundled SSC reference template, and LibreOffice.">
+<title>md2office — Markdown to polished DOCX &amp; PDF</title>
+<meta name="description" content="Convert Markdown to a polished DOCX and PDF with pandoc, a bundled reference template, and LibreOffice.">
+  <link rel="icon" href="favicon.ico" sizes="16x16 32x32 48x48">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="favicon.ico">
 <style>
   :root {
     --bg: #0b0f1a;
@@ -318,21 +321,17 @@
     <a href="#quickstart">Quick start</a>
     <a href="#options">Options</a>
     <a href="#api">Library</a>
-    <a class="gh-badge" href="https://github.com/anomalyco/security-narratives" target="_blank" rel="noopener">
-      <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>
-      GitHub
-    </a>
   </div>
 </nav>
 
 <header class="hero" id="top">
   <div class="wrap">
-    <span class="pill"><b>v0.1.0</b> &nbsp;·&nbsp; the SSC book build, as a package</span>
-    <h1>Markdown in. <span class="grad">SSC-styled DOCX &amp; PDF</span> out.</h1>
+    <span class="pill"><b>v0.1.0</b> &nbsp;·&nbsp; Markdown to DOCX &amp; PDF</span>
+    <h1>Markdown in. <span class="grad">Polished DOCX &amp; PDF</span> out.</h1>
     <p class="sub">
-      md2office turns a plain Markdown report into a Word document and PDF that match
-      the assessed Aurora security-narratives book — headers with title &amp; classification,
-      wide autofit tables, shaded monospace code, and a static TOC.
+      md2office turns a plain Markdown report into a Word document and PDF that look like they
+      came from a publisher — title &amp; classification in the headers, wide autofit tables,
+      shaded monospace code, and a static table of contents.
     </p>
     <div class="cta">
       <a class="btn btn-primary" href="#quickstart">Get started</a>
@@ -350,12 +349,12 @@
 <section id="features">
   <div class="wrap">
     <h2>Why md2office</h2>
-    <p class="section-lead">Everything the SA&amp;A book build does, in one import — no scripts to copy between repos.</p>
+    <p class="section-lead">Everything a document build needs, in one import — no scripts to copy between repos.</p>
     <div class="grid">
       <div class="card">
         <span class="icon">📄</span>
-        <h3>Bundled SSC template</h3>
-        <p>The reference <code class="inline">ssc-template-v2.7.dotx</code> ships inside the package, with the pagebreak, TOC, and mermaid Lua filters.</p>
+        <h3>Bundled reference template</h3>
+        <p>The reference DOCX template ships inside the package, with the pagebreak, TOC, and mermaid Lua filters.</p>
       </div>
       <div class="card">
         <span class="icon">🔖</span>
@@ -370,7 +369,7 @@
       <div class="card">
         <span class="icon">⌨️</span>
         <h3>Code styling</h3>
-        <p><code class="inline">SourceCode</code> and <code class="inline">VerbatimChar</code> get Consolas 9pt and light-grey shading, exactly like the assessed build.</p>
+        <p><code class="inline">SourceCode</code> and <code class="inline">VerbatimChar</code> get Consolas 9pt and light-grey shading.</p>
       </div>
       <div class="card">
         <span class="icon">🔁</span>
@@ -389,7 +388,7 @@
 <section id="how">
   <div class="wrap">
     <h2>How it works</h2>
-    <p class="section-lead">One pipeline: pandoc builds the DOCX against the SSC template, the package post-processes it, LibreOffice renders the PDF.</p>
+    <p class="section-lead">One pipeline: pandoc builds the DOCX against the bundled reference template, the package post-processes it, LibreOffice renders the PDF.</p>
     <div class="pipeline">
       <div class="stage">
         <div class="step">01</div>
@@ -400,7 +399,7 @@
       <div class="stage">
         <div class="step">02</div>
         <h4>pandoc</h4>
-        <p>Renders against the bundled SSC template with the Lua filters.</p>
+        <p>Renders against the bundled reference template with the Lua filters.</p>
       </div>
       <div class="arrow">→</div>
       <div class="stage">
@@ -412,7 +411,7 @@
       <div class="stage">
         <div class="step">04</div>
         <h4>soffice</h4>
-        <p>Headless DOCX → PDF export, ready for the assessor.</p>
+        <p>Headless DOCX → PDF export, ready to share or print.</p>
       </div>
     </div>
   </div>
@@ -490,7 +489,7 @@ opts = <span class="n">ConvertOptions</span>(number_sections=<span class="k">Tru
 
 <footer>
   <div class="wrap">
-    <p>Built for the <a href="https://github.com/anomalyco/security-narratives" target="_blank" rel="noopener">Aurora security-narratives</a> SA&amp;A build · MIT licensed · made with pandoc &amp; LibreOffice</p>
+    <p>MIT licensed · made with pandoc &amp; LibreOffice</p>
   </div>
 </footer>
 

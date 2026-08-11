@@ -1,13 +1,11 @@
 # md2office
 
-Convert Markdown to SSC-styled DOCX and PDF, the way the
-[`security-narratives`](https://github.com/anomalyco/security-narratives) book
-build does — bundled as a small reusable package.
+Convert Markdown to polished DOCX and PDF as a small reusable package.
 
-The engine wraps **pandoc** (Markdown → DOCX with the SSC reference template
+The engine wraps **pandoc** (Markdown → DOCX with a bundled reference template
 and Lua filters) and **LibreOffice** (DOCX → PDF), then post-processes the DOCX
-so the output matches the assessed book: title + bilingual classification in
-every page header, wide autofit tables with explicit borders, monospace shaded
+so the output is publication-ready: title + bilingual classification in every
+page header, wide autofit tables with explicit borders, monospace shaded
 code blocks, and a static table of contents.
 
 ## Requirements
@@ -81,12 +79,13 @@ src/md2office/
   engine.py          pandoc/LibreOffice orchestration + doctor
   postprocess.py     DOCX post-processing (headers, tables, code style)
   cli.py / __main__.py
-  assets/            ssc-template-v2.7.dotx + Lua filters (pagebreak, toc, mermaid)
+  assets/            reference.dotx + Lua filters (pagebreak, toc, mermaid)
 ```
 
 ## Notes
 
 - Pandoc must be able to find its Lua filters and the reference template; they
   are bundled inside the package so there is nothing to install.
-- The template (`ssc-template-v2.7.dotx`) and the post-processing behaviour are
-  vendored from the SSC `markdown-to-word` build; keep them in sync deliberately.
+- The template and post-processing behaviour are tailored to the style used by
+  the documentation build this was extracted from; swap in your own template
+  and tune `postprocess.py` deliberately when you need a different look.
