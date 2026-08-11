@@ -1,0 +1,498 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>md2office — Markdown to SSC-styled DOCX &amp; PDF</title>
+<meta name="description" content="Convert Markdown to SSC-styled DOCX and PDF with pandoc, a bundled SSC reference template, and LibreOffice.">
+<style>
+  :root {
+    --bg: #0b0f1a;
+    --bg-2: #10152a;
+    --panel: rgba(255, 255, 255, 0.04);
+    --panel-border: rgba(255, 255, 255, 0.09);
+    --text: #e6ebf7;
+    --muted: #93a1bf;
+    --accent: #6ee7ff;
+    --accent-2: #a78bfa;
+    --accent-3: #34d399;
+    --code-bg: #070a13;
+    --mono: "SFMono-Regular", "JetBrains Mono", Consolas, "Liberation Mono", Menlo, monospace;
+    --sans: "Inter", "Segoe UI", system-ui, -apple-system, Roboto, Helvetica, Arial, sans-serif;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: var(--sans);
+    color: var(--text);
+    background: var(--bg);
+    line-height: 1.6;
+    overflow-x: hidden;
+  }
+
+  /* ambient background */
+  .glow {
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    background:
+      radial-gradient(60rem 40rem at 12% -10%, rgba(110, 231, 255, 0.13), transparent 60%),
+      radial-gradient(50rem 34rem at 88% 12%, rgba(167, 139, 250, 0.12), transparent 60%),
+      radial-gradient(70rem 50rem at 50% 110%, rgba(52, 211, 153, 0.08), transparent 60%),
+      var(--bg);
+  }
+  .grid-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    background-image:
+      linear-gradient(rgba(255, 255, 255, 0.025) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255, 255, 255, 0.025) 1px, transparent 1px);
+    background-size: 44px 44px;
+    mask-image: radial-gradient(80rem 50rem at 50% 0%, black 30%, transparent 80%);
+  }
+
+  .wrap { max-width: 1080px; margin: 0 auto; padding: 0 24px; }
+
+  nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 0;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    backdrop-filter: blur(8px);
+    background: rgba(11, 15, 26, 0.7);
+  }
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 700;
+    font-size: 1.05rem;
+    letter-spacing: 0.02em;
+  }
+  .mark {
+    width: 26px;
+    height: 26px;
+    border-radius: 7px;
+    background: linear-gradient(135deg, var(--accent), var(--accent-2));
+    display: grid;
+    place-items: center;
+    font-size: 13px;
+    font-weight: 800;
+    color: #0b0f1a;
+  }
+  nav a { color: var(--muted); text-decoration: none; font-size: 0.92rem; }
+  nav a:hover { color: var(--text); }
+  nav .links { display: flex; gap: 22px; align-items: center; }
+  .gh-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    border: 1px solid var(--panel-border);
+    border-radius: 999px;
+    background: var(--panel);
+    font-size: 0.85rem;
+  }
+  .gh-badge:hover { border-color: var(--accent); color: var(--text); }
+
+  header.hero { padding: 84px 0 64px; text-align: center; }
+  .pill {
+    display: inline-block;
+    padding: 5px 14px;
+    border: 1px solid var(--panel-border);
+    border-radius: 999px;
+    background: var(--panel);
+    font-size: 0.8rem;
+    color: var(--muted);
+    margin-bottom: 24px;
+  }
+  .pill b { color: var(--accent-3); font-weight: 600; }
+  h1 {
+    font-size: clamp(2.2rem, 5vw, 3.6rem);
+    line-height: 1.1;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    margin-bottom: 20px;
+  }
+  h1 .grad {
+    background: linear-gradient(100deg, var(--accent), var(--accent-2) 60%, var(--accent-3));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  .sub {
+    max-width: 640px;
+    margin: 0 auto 36px;
+    color: var(--muted);
+    font-size: 1.12rem;
+  }
+  .cta { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; }
+  .btn {
+    display: inline-block;
+    padding: 12px 26px;
+    border-radius: 10px;
+    font-weight: 600;
+    text-decoration: none;
+    font-size: 0.98rem;
+    transition: transform 0.15s ease, box-shadow 0.2s ease;
+  }
+  .btn:hover { transform: translateY(-2px); }
+  .btn-primary {
+    background: linear-gradient(135deg, var(--accent), var(--accent-2));
+    color: #0b0f1a;
+    box-shadow: 0 8px 30px rgba(110, 231, 255, 0.25);
+  }
+  .btn-primary:hover { box-shadow: 0 10px 40px rgba(167, 139, 250, 0.35); }
+  .btn-ghost {
+    border: 1px solid var(--panel-border);
+    color: var(--text);
+    background: var(--panel);
+  }
+  .btn-ghost:hover { border-color: var(--accent); }
+
+  .badges { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin-top: 34px; }
+  .badge {
+    padding: 4px 12px;
+    border-radius: 999px;
+    font-size: 0.75rem;
+    color: var(--muted);
+    border: 1px solid var(--panel-border);
+    background: var(--panel);
+  }
+
+  section { padding: 48px 0; }
+  h2 {
+    font-size: clamp(1.4rem, 3vw, 1.9rem);
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    margin-bottom: 12px;
+  }
+  .section-lead { color: var(--muted); max-width: 640px; margin-bottom: 36px; }
+
+  /* features */
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 18px;
+  }
+  .card {
+    background: var(--panel);
+    border: 1px solid var(--panel-border);
+    border-radius: 14px;
+    padding: 24px;
+    transition: border-color 0.2s ease, transform 0.2s ease;
+  }
+  .card:hover { border-color: rgba(110, 231, 255, 0.4); transform: translateY(-3px); }
+  .card .icon {
+    font-size: 1.5rem;
+    margin-bottom: 12px;
+    display: inline-block;
+  }
+  .card h3 { font-size: 1.05rem; margin-bottom: 8px; }
+  .card p { color: var(--muted); font-size: 0.93rem; }
+
+  /* pipeline */
+  .pipeline {
+    display: flex;
+    align-items: stretch;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin: 8px 0 4px;
+  }
+  .stage {
+    flex: 1 1 180px;
+    max-width: 240px;
+    background: var(--panel);
+    border: 1px solid var(--panel-border);
+    border-radius: 12px;
+    padding: 18px;
+    text-align: center;
+  }
+  .stage .step {
+    font-family: var(--mono);
+    font-size: 0.75rem;
+    color: var(--accent-2);
+    margin-bottom: 6px;
+  }
+  .stage h4 { font-size: 0.98rem; margin-bottom: 4px; }
+  .stage p { color: var(--muted); font-size: 0.85rem; }
+  .arrow { align-self: center; color: var(--muted); font-size: 1.2rem; padding: 0 2px; }
+
+  /* code blocks */
+  .code-block {
+    background: var(--code-bg);
+    border: 1px solid var(--panel-border);
+    border-radius: 12px;
+    overflow: hidden;
+    margin: 18px 0;
+  }
+  .code-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 16px;
+    border-bottom: 1px solid var(--panel-border);
+    font-size: 0.72rem;
+    color: var(--muted);
+    font-family: var(--mono);
+  }
+  .dots { display: flex; gap: 6px; }
+  .dot { width: 10px; height: 10px; border-radius: 50%; }
+  .dot.r { background: #ff5f57; }
+  .dot.y { background: #febc2e; }
+  .dot.g { background: #28c840; }
+  pre {
+    padding: 18px 20px;
+    overflow-x: auto;
+    font-family: var(--mono);
+    font-size: 0.88rem;
+    line-height: 1.65;
+  }
+  pre .c  { color: #5b6b8c; }
+  pre .k  { color: var(--accent-2); }
+  pre .s  { color: var(--accent-3); }
+  pre .f  { color: var(--accent); }
+  pre .o  { color: #fbbf24; }
+  pre .n  { color: var(--text); }
+
+  /* table */
+  .table-wrap { overflow-x: auto; border: 1px solid var(--panel-border); border-radius: 12px; }
+  table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
+  thead th {
+    text-align: left;
+    padding: 12px 16px;
+    background: var(--panel);
+    font-size: 0.78rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--muted);
+    border-bottom: 1px solid var(--panel-border);
+  }
+  tbody td { padding: 12px 16px; border-bottom: 1px solid rgba(255,255,255,0.05); }
+  tbody tr:last-child td { border-bottom: none; }
+  tbody tr:hover td { background: rgba(110, 231, 255, 0.04); }
+  code.inline {
+    font-family: var(--mono);
+    font-size: 0.82em;
+    background: rgba(255,255,255,0.07);
+    padding: 2px 7px;
+    border-radius: 6px;
+    color: var(--accent);
+  }
+
+  footer {
+    border-top: 1px solid var(--panel-border);
+    margin-top: 40px;
+    padding: 34px 0;
+    text-align: center;
+    color: var(--muted);
+    font-size: 0.85rem;
+  }
+  footer a { color: var(--muted); }
+  footer a:hover { color: var(--text); }
+
+  @media (max-width: 640px) {
+    nav .links a:not(.gh-badge) { display: none; }
+    header.hero { padding: 56px 0 40px; }
+    section { padding: 32px 0; }
+  }
+</style>
+</head>
+<body>
+<div class="glow"></div>
+<div class="grid-overlay"></div>
+
+<nav class="wrap">
+  <a class="brand" href="#top"><span class="mark">m</span> md2office</a>
+  <div class="links">
+    <a href="#features">Features</a>
+    <a href="#how">How it works</a>
+    <a href="#quickstart">Quick start</a>
+    <a href="#options">Options</a>
+    <a href="#api">Library</a>
+    <a class="gh-badge" href="https://github.com/anomalyco/security-narratives" target="_blank" rel="noopener">
+      <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>
+      GitHub
+    </a>
+  </div>
+</nav>
+
+<header class="hero" id="top">
+  <div class="wrap">
+    <span class="pill"><b>v0.1.0</b> &nbsp;·&nbsp; the SSC book build, as a package</span>
+    <h1>Markdown in. <span class="grad">SSC-styled DOCX &amp; PDF</span> out.</h1>
+    <p class="sub">
+      md2office turns a plain Markdown report into a Word document and PDF that match
+      the assessed Aurora security-narratives book — headers with title &amp; classification,
+      wide autofit tables, shaded monospace code, and a static TOC.
+    </p>
+    <div class="cta">
+      <a class="btn btn-primary" href="#quickstart">Get started</a>
+      <a class="btn btn-ghost" href="#api">Read the API</a>
+    </div>
+    <div class="badges">
+      <span class="badge">Python 3.9+</span>
+      <span class="badge">pandoc</span>
+      <span class="badge">LibreOffice</span>
+      <span class="badge">MIT</span>
+    </div>
+  </div>
+</header>
+
+<section id="features">
+  <div class="wrap">
+    <h2>Why md2office</h2>
+    <p class="section-lead">Everything the SA&amp;A book build does, in one import — no scripts to copy between repos.</p>
+    <div class="grid">
+      <div class="card">
+        <span class="icon">📄</span>
+        <h3>Bundled SSC template</h3>
+        <p>The reference <code class="inline">ssc-template-v2.7.dotx</code> ships inside the package, with the pagebreak, TOC, and mermaid Lua filters.</p>
+      </div>
+      <div class="card">
+        <span class="icon">🔖</span>
+        <h3>Header injection</h3>
+        <p>Title and bilingual classification go into every page header and the core document metadata automatically.</p>
+      </div>
+      <div class="card">
+        <span class="icon">📊</span>
+        <h3>Table fixes</h3>
+        <p>Pandoc tables are rewritten to 100% autofit width with explicit borders, so LibreOffice stops crushing them.</p>
+      </div>
+      <div class="card">
+        <span class="icon">⌨️</span>
+        <h3>Code styling</h3>
+        <p><code class="inline">SourceCode</code> and <code class="inline">VerbatimChar</code> get Consolas 9pt and light-grey shading, exactly like the assessed build.</p>
+      </div>
+      <div class="card">
+        <span class="icon">🔁</span>
+        <h3>DOCX → PDF</h3>
+        <p>Headless LibreOffice with a fresh per-run profile, so concurrent conversions don't lock each other out.</p>
+      </div>
+      <div class="card">
+        <span class="icon">🩺</span>
+        <h3>Prerequisite doctor</h3>
+        <p><code class="inline">md2office doctor</code> checks pandoc, LibreOffice, python-docx, and the fonts the PDF needs.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="how">
+  <div class="wrap">
+    <h2>How it works</h2>
+    <p class="section-lead">One pipeline: pandoc builds the DOCX against the SSC template, the package post-processes it, LibreOffice renders the PDF.</p>
+    <div class="pipeline">
+      <div class="stage">
+        <div class="step">01</div>
+        <h4>Markdown</h4>
+        <p>Frontmatter title, tables, fenced code, mermaid blocks.</p>
+      </div>
+      <div class="arrow">→</div>
+      <div class="stage">
+        <div class="step">02</div>
+        <h4>pandoc</h4>
+        <p>Renders against the bundled SSC template with the Lua filters.</p>
+      </div>
+      <div class="arrow">→</div>
+      <div class="stage">
+        <div class="step">03</div>
+        <h4>postprocess</h4>
+        <p>Headers, classification, table width, code style, TOC.</p>
+      </div>
+      <div class="arrow">→</div>
+      <div class="stage">
+        <div class="step">04</div>
+        <h4>soffice</h4>
+        <p>Headless DOCX → PDF export, ready for the assessor.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="quickstart">
+  <div class="wrap">
+    <h2>Quick start</h2>
+    <p class="section-lead">Install, run <code class="inline">doctor</code>, convert. That's it.</p>
+
+    <div class="code-block">
+      <div class="code-head"><span>terminal</span><span class="dots"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span></span></div>
+<pre><span class="c"># 1. install</span>
+pip install md2office
+
+<span class="c"># 2. check prerequisites</span>
+md2office doctor
+
+<span class="c"># 3. convert</span>
+md2office docx report.md report.docx --classification "Protected A"
+md2office pdf  report.md report.pdf
+</pre>
+    </div>
+
+    <p class="section-lead" style="margin-top:28px">The title defaults to your YAML frontmatter, and the classification to <code class="inline">Unclassified | Non classifié</code>.</p>
+  </div>
+</section>
+
+<section id="options">
+  <div class="wrap">
+    <h2>Options</h2>
+    <p class="section-lead">Everything is exposed on the CLI and through <code class="inline">ConvertOptions</code>.</p>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr><th>Option</th><th>Default</th><th>Meaning</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><code class="inline">title</code></td><td>frontmatter</td><td>Document title; written into headers + core metadata</td></tr>
+          <tr><td><code class="inline">classification</code></td><td><code class="inline">Unclassified | Non classifié</code></td><td>Sensitivity label in every page header</td></tr>
+          <tr><td><code class="inline">number_sections</code></td><td><code class="inline">False</code></td><td>Pass <code class="inline">--number-sections</code> to pandoc</td></tr>
+          <tr><td><code class="inline">code_style</code></td><td><code class="inline">True</code></td><td>Consolas 9pt + shading on code styles</td></tr>
+          <tr><td><code class="inline">page_breaks</code></td><td><code class="inline">"none"</code></td><td><code class="inline">"sections"</code> puts each Heading1 on a new page</td></tr>
+          <tr><td><code class="inline">font</code></td><td><code class="inline">"default"</code></td><td><code class="inline">"arial"</code> switches the document font</td></tr>
+          <tr><td><code class="inline">mermaid</code></td><td><code class="inline">"auto"</code></td><td>Render ``` ```mermaid``` blocks (needs <code class="inline">mmdc</code>)</td></tr>
+          <tr><td><code class="inline">keep_docx</code></td><td><code class="inline">False</code></td><td>Keep the intermediate DOCX when producing a PDF</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<section id="api">
+  <div class="wrap">
+    <h2>Library</h2>
+    <p class="section-lead">Use it directly from Python — no shell needed.</p>
+    <div class="code-block">
+      <div class="code-head"><span>python</span><span class="dots"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span></span></div>
+<pre><span class="k">import</span> <span class="n">md2office</span>
+
+md2office.<span class="f">to_docx</span>(<span class="s">"report.md"</span>, <span class="s">"report.docx"</span>,
+                  title=<span class="s">"My Report"</span>, classification=<span class="s">"Protected A"</span>)
+md2office.<span class="f">to_pdf</span>(<span class="s">"report.md"</span>, <span class="s">"report.pdf"</span>)
+
+<span class="c"># fine-grained control</span>
+<span class="k">from</span> <span class="n">md2office</span> <span class="k">import</span> <span class="n">ConvertOptions</span>, <span class="n">to_pdf</span>
+
+opts = <span class="n">ConvertOptions</span>(number_sections=<span class="k">True</span>, font=<span class="s">"arial"</span>,
+                           page_breaks=<span class="s">"sections"</span>)
+<span class="n">to_pdf</span>(<span class="s">"report.md"</span>, <span class="s">"report.pdf"</span>, options=opts)
+</pre>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <p>Built for the <a href="https://github.com/anomalyco/security-narratives" target="_blank" rel="noopener">Aurora security-narratives</a> SA&amp;A build · MIT licensed · made with pandoc &amp; LibreOffice</p>
+  </div>
+</footer>
+
+</body>
+</html>
