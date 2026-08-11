@@ -307,6 +307,48 @@
     header.hero { padding: 56px 0 40px; }
     section { padding: 32px 0; }
   }
+
+  /* hero gradient panel */
+  .hero-shot {
+    position: relative;
+    margin: 56px auto 0;
+    max-width: 640px;
+    height: 320px;
+    border-radius: 24px;
+    background:
+      radial-gradient(120% 130% at 50% 0%, rgba(255, 255, 255, 0.28), transparent 55%),
+      linear-gradient(135deg, var(--accent), var(--accent-2) 55%, var(--accent-3));
+    box-shadow:
+      0 30px 80px rgba(110, 231, 255, 0.28),
+      0 12px 40px rgba(0, 0, 0, 0.4);
+    display: grid;
+    place-items: center;
+    align-content: center;
+    gap: 22px;
+    border: 1px solid rgba(255, 255, 255, 0.25);
+  }
+  .hero-logo {
+    width: 84px;
+    height: 84px;
+    border-radius: 22px;
+    background: rgba(11, 15, 26, 0.92);
+    color: var(--accent);
+    display: grid;
+    place-items: center;
+    font-size: 46px;
+    font-weight: 800;
+    box-shadow: 0 20px 50px rgba(11, 15, 26, 0.35);
+  }
+  .hero-caption {
+    font-family: var(--mono);
+    font-size: 0.92rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    color: rgba(11, 15, 26, 0.78);
+  }
+  @media (max-width: 640px) {
+    .hero-shot { height: 240px; }
+  }
 </style>
 </head>
 <body>
@@ -327,7 +369,7 @@
 <header class="hero" id="top">
   <div class="wrap">
     <span class="pill"><b>v0.1.0</b> &nbsp;·&nbsp; Markdown to DOCX &amp; PDF</span>
-    <h1>Markdown in. <span class="grad">Polished DOCX &amp; PDF</span> out.</h1>
+    <h1>Markdown in.<br><span class="grad">Polished DOCX &amp; PDF</span> out.</h1>
     <p class="sub">
       md2office turns a plain Markdown report into a Word document and PDF that look like they
       came from a publisher — title &amp; classification in the headers, wide autofit tables,
@@ -341,7 +383,12 @@
       <span class="badge">Python 3.9+</span>
       <span class="badge">pandoc</span>
       <span class="badge">LibreOffice</span>
-      <span class="badge">MIT</span>
+      <span class="badge">GPL-3.0</span>
+    </div>
+
+    <div class="hero-shot">
+      <div class="hero-logo">m</div>
+      <div class="hero-caption">Markdown &rarr; DOCX &amp; PDF</div>
     </div>
   </div>
 </header>
@@ -489,7 +536,7 @@ opts = <span class="n">ConvertOptions</span>(number_sections=<span class="k">Tru
 
 <footer>
   <div class="wrap">
-    <p>MIT licensed · made with pandoc &amp; LibreOffice</p>
+    <p>GPL-3.0 licensed · made with pandoc &amp; LibreOffice</p>
   </div>
 </footer>
 
