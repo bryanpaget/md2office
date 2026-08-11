@@ -2,8 +2,9 @@
 
 Convert Markdown to polished DOCX and PDF as a small reusable package.
 
-The engine wraps **pandoc** (Markdown → DOCX with a bundled reference template
-and Lua filters) and **LibreOffice** (DOCX → PDF), then post-processes the DOCX
+The engine wraps **pandoc** (Markdown → DOCX against a user-supplied
+reference template, with bundled Lua filters) and **LibreOffice** (DOCX →
+PDF), then post-processes the DOCX
 so the output is publication-ready: title + bilingual classification in every
 page header, wide autofit tables with explicit borders, monospace shaded
 code blocks, and a static table of contents.
@@ -15,6 +16,10 @@ code blocks, and a static table of contents.
 - LibreOffice (`soffice`) for PDF conversion
 - Carlito + Noto Color Emoji fonts (for PDF rendering)
 - `python-docx` (installed automatically with the package)
+- A Word **reference template** (`.docx` or `.dotx`) for full styling — cover
+  page, header classification, custom heading/table styles. It is optional:
+  without one, pandoc falls back to its built-in default reference document
+  for a clean standard Word look.
 
 Run `md2office doctor` to check everything.
 
@@ -35,6 +40,7 @@ docs/
   chapter-2.md       # optional: keep long sections as separate files
   images/
     diagram.png
+template.dotx        # your Word reference template (user-supplied)
 output/              # generated files (gitignore this)
   report.docx
   report.pdf
@@ -46,6 +52,12 @@ Rules of thumb:
   the Markdown file's folder, which is automatically on pandoc's resource
   path. Extra folders can be added with `-r <dir>` (CLI) or
   `resource_path=[...]` (library).
+- **Supply a reference template (optional).** Pandoc uses a `.docx`/`.dotx`
+  reference document for its default styles. Pass yours with `--template`
+  (CLI) or `template=...` (library). Omit it and pandoc's built-in default
+  reference document is used — still clean, just without a custom cover or
+  header classification. See `pandoc --print-default-data-file reference.docx`
+  to generate a starting point you can restyle.
 - **Set the title in YAML frontmatter** at the top of the master file. It is
   written into the page headers, cover, and core metadata:
 
@@ -70,7 +82,7 @@ Convert:
 
 ```
 cd docs
-md2office pdf report.md ../output/report.pdf
+md2office pdf --template ../template.dotx report.md ../output/report.pdf
 ```
 
 > **Multi-chapter books:** md2office does not assemble multiple files. Either
@@ -82,9 +94,9 @@ md2office pdf report.md ../output/report.pdf
 ### CLI
 
 ```
-md2office docx report.md report.docx --title "My Report" --classification "Protected A"
-md2office pdf  report.md report.pdf
-md2office pdf  report.md report.pdf --keep-docx   # keep intermediate .docx
+md2office docx --template template.dotx report.md report.docx --title "My Report" --classification "Protected A"
+md2office pdf  --template template.dotx report.md report.pdf
+md2office pdf  --template template.dotx report.md report.pdf --keep-docx   # keep intermediate .docx
 md2office doctor
 ```
 
@@ -97,13 +109,15 @@ defaults to `Unclassified | Non classifié`.
 import md2office
 
 md2office.to_docx("report.md", "report.docx",
+                  template="template.dotx",
                   title="My Report", classification="Protected A")
-md2office.to_pdf("report.md", "report.pdf")
+md2office.to_pdf("report.md", "report.pdf", template="template.dotx")
 
 # fine-grained control
 from md2office import ConvertOptions, to_pdf
 
-opts = ConvertOptions(number_sections=True, font="arial", page_breaks="sections")
+opts = ConvertOptions(template="template.dotx",
+                      number_sections=True, font="arial", page_breaks="sections")
 to_pdf("report.md", "report.pdf", options=opts)
 ```
 
@@ -113,6 +127,7 @@ to_pdf("report.md", "report.pdf", options=opts)
 | ------------------- | ---------- | --------------------------------------------------- |
 | `title`             | `""`       | Document title; header + core metadata              |
 | `classification`    | `"Unclassified \| Non classifié"` | Sensitivity label in headers |
+| `template`          | `None`     | Word reference template (`.docx`/`.dotx`); falls back to pandoc's default |
 | `author`            | `""`       | Author (used for section page breaks)               |
 | `version`           | `""`       | Version (used for section page breaks)              |
 | `effective_date`    | `""`       | Effective date (used for section page breaks)       |
@@ -132,13 +147,16 @@ src/md2office/
   engine.py          pandoc/LibreOffice orchestration + doctor
   postprocess.py     DOCX post-processing (headers, tables, code style)
   cli.py / __main__.py
-  assets/            reference.dotx + Lua filters (pagebreak, toc, mermaid)
+  assets/            Lua filters only (pagebreak, toc, mermaid)
 ```
 
 ## Notes
 
-- Pandoc must be able to find its Lua filters and the reference template; they
-  are bundled inside the package so there is nothing to install.
-- The template and post-processing behaviour are tailored to the style used by
-  the documentation build this was extracted from; swap in your own template
-  and tune `postprocess.py` deliberately when you need a different look.
+- The Lua filters are bundled with the package; the reference template is not.
+  Supply your own with `--template` / `options.template`, or omit it to use
+  pandoc's built-in default reference document.
+- The post-processing behaviour (header injection, table width fixes, code
+  styling) is tuned to the template this package was built against. It is
+  defensive — if your template (or pandoc's default) lacks the expected
+  placeholders or styles, the steps no-op rather than fail. The best results
+  come from a template with the same structure.

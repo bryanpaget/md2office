@@ -1,9 +1,10 @@
 """High-level Markdown -> DOCX -> PDF conversion engine.
 
-Wraps pandoc (Markdown -> DOCX with the bundled reference template and Lua
-filters) and LibreOffice (DOCX -> PDF), then post-processes the DOCX so the
-output is publication-ready: title + classification in the headers, wide
-autofit tables, monospace shaded code blocks, and a static table of contents.
+Wraps pandoc (Markdown -> DOCX with a user-supplied reference template and the
+bundled Lua filters) and LibreOffice (DOCX -> PDF), then post-processes the
+DOCX so the output is publication-ready: title + classification in the
+headers, wide autofit tables, monospace shaded code blocks, and a static
+table of contents.
 """
 
 from __future__ import annotations
@@ -25,7 +26,6 @@ VERSION = __version__
 DEFAULT_CLASSIFICATION = "Unclassified | Non classifié"
 
 ASSETS = Path(__file__).parent / "assets"
-TEMPLATE = ASSETS / "reference.dotx"
 FILTER_PAGEBREAK = ASSETS / "pagebreak.lua"
 FILTER_TOC = ASSETS / "toc.lua"
 FILTER_MERMAID = ASSETS / "mermaid.lua"
@@ -39,6 +39,7 @@ class ConvertOptions:
 
     title: str = ""
     classification: str = DEFAULT_CLASSIFICATION
+    template: Optional[str] = None
     author: str = ""
     version: str = ""
     effective_date: str = ""
@@ -100,6 +101,17 @@ def _resolve_title(markdown: Path, options: ConvertOptions) -> str:
     return markdown.stem.replace("_", " ").replace("-", " ").title()
 
 
+def _resolve_template(options: ConvertOptions) -> Optional[Path]:
+    """Return the user-supplied reference template path, or None to use
+    pandoc's built-in default reference document."""
+    if not options.template:
+        return None
+    path = Path(options.template)
+    if not path.exists():
+        raise FileNotFoundError(f"Reference template not found: {path}")
+    return path
+
+
 def _pandoc_command(
     markdown: Path,
     docx: Path,
@@ -124,10 +136,11 @@ def _pandoc_command(
             "--metadata=title=" + _resolve_title(markdown, options),
             "-o",
             str(docx),
-            "--reference-doc",
-            str(TEMPLATE),
         ]
     )
+    template = _resolve_template(options)
+    if template is not None:
+        cmd.extend(["--reference-doc", str(template)])
     return cmd
 
 
@@ -137,7 +150,12 @@ def to_docx(
     *,
     options: Optional[ConvertOptions] = None,
 ) -> str:
-    """Convert a Markdown file to a formatted DOCX using the reference template.
+    """Convert a Markdown file to a formatted DOCX.
+
+    Pass a reference Word template via ``options.template`` for the full
+    styling (cover page, header classification, heading/table styles).
+    Without one, pandoc falls back to its built-in default reference
+    document — still a clean, standard Word look.
 
     Returns the path to the generated .docx.
     """

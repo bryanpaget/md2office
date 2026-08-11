@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>md2office — Markdown to polished DOCX &amp; PDF</title>
-<meta name="description" content="Convert Markdown to a polished DOCX and PDF with pandoc, a bundled reference template, and LibreOffice.">
+<meta name="description" content="Convert Markdown to a polished DOCX and PDF with pandoc, your reference template, and LibreOffice.">
   <link rel="icon" href="favicon.ico" sizes="16x16 32x32 48x48">
   <link rel="icon" href="favicon.svg" type="image/svg+xml">
   <link rel="apple-touch-icon" href="favicon.ico">
@@ -401,8 +401,8 @@
     <div class="grid">
       <div class="card">
         <span class="icon">📄</span>
-        <h3>Bundled reference template</h3>
-        <p>The reference DOCX template ships inside the package, with the pagebreak, TOC, and mermaid Lua filters.</p>
+        <h3>Bring your own template</h3>
+        <p>Pass a Word reference template (<code class="inline">.docx</code>/<code class="inline">.dotx</code>) via <code class="inline">--template</code> for a custom cover and header classification. No template? Pandoc's built-in default gives a clean standard look.</p>
       </div>
       <div class="card">
         <span class="icon">🔖</span>
@@ -436,7 +436,7 @@
 <section id="how">
   <div class="wrap">
     <h2>How it works</h2>
-    <p class="section-lead">One pipeline: pandoc builds the DOCX against the bundled reference template, the package post-processes it, LibreOffice renders the PDF.</p>
+    <p class="section-lead">One pipeline: pandoc builds the DOCX against your reference template, the package post-processes it, LibreOffice renders the PDF.</p>
     <div class="pipeline">
       <div class="stage">
         <div class="step">01</div>
@@ -447,7 +447,7 @@
       <div class="stage">
         <div class="step">02</div>
         <h4>pandoc</h4>
-        <p>Renders against the bundled reference template with the Lua filters.</p>
+        <p>Renders against your reference template with the Lua filters.</p>
       </div>
       <div class="arrow">→</div>
       <div class="stage">
@@ -478,13 +478,13 @@ pip install md2office
 <span class="c"># 2. check prerequisites</span>
 md2office doctor
 
-<span class="c"># 3. convert</span>
-md2office docx report.md report.docx --classification "Protected A"
-md2office pdf  report.md report.pdf
+<span class="c"># 3. convert (supply your own reference template)</span>
+md2office docx --template template.dotx report.md report.docx --classification "Protected A"
+md2office pdf  --template template.dotx report.md report.pdf
 </pre>
     </div>
 
-    <p class="section-lead" style="margin-top:28px">The title defaults to your YAML frontmatter, and the classification to <code class="inline">Unclassified | Non classifié</code>.</p>
+    <p class="section-lead" style="margin-top:28px">No template handy? Omit <code class="inline">--template</code> and pandoc's built-in reference document is used instead — still clean, just without a custom cover or header classification. The title still defaults to your YAML frontmatter.</p>
   </div>
 </section>
 
@@ -500,6 +500,7 @@ md2office pdf  report.md report.pdf
   chapter-2.md     <span class="c"># optional: long sections as separate files</span>
   images/
     diagram.png
+template.dotx     <span class="c"># your Word reference template (user-supplied)</span>
 output/            <span class="c"># generated files (gitignore this)</span>
   report.docx
   report.pdf
@@ -547,7 +548,7 @@ Reference images relative to this file:
     <div class="code-block">
       <div class="code-head"><span>convert</span><span class="dots"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span></span></div>
 <pre><span class="n">cd</span> docs
-<span class="n">md2office</span> <span class="k">pdf</span> report.md ../output/report.pdf
+<span class="n">md2office</span> <span class="k">pdf</span> --template ../template.dotx report.md ../output/report.pdf
 </pre>
     </div>
 
@@ -566,6 +567,7 @@ Reference images relative to this file:
         </thead>
         <tbody>
           <tr><td><code class="inline">title</code></td><td>frontmatter</td><td>Document title; written into headers + core metadata</td></tr>
+          <tr><td><code class="inline">template</code></td><td><code class="inline">None</code></td><td>Word reference template; falls back to pandoc's built-in default</td></tr>
           <tr><td><code class="inline">classification</code></td><td><code class="inline">Unclassified | Non classifié</code></td><td>Sensitivity label in every page header</td></tr>
           <tr><td><code class="inline">number_sections</code></td><td><code class="inline">False</code></td><td>Pass <code class="inline">--number-sections</code> to pandoc</td></tr>
           <tr><td><code class="inline">code_style</code></td><td><code class="inline">True</code></td><td>Consolas 9pt + shading on code styles</td></tr>
@@ -588,13 +590,15 @@ Reference images relative to this file:
 <pre><span class="k">import</span> <span class="n">md2office</span>
 
 md2office.<span class="f">to_docx</span>(<span class="s">"report.md"</span>, <span class="s">"report.docx"</span>,
+                  template=<span class="s">"template.dotx"</span>,
                   title=<span class="s">"My Report"</span>, classification=<span class="s">"Protected A"</span>)
-md2office.<span class="f">to_pdf</span>(<span class="s">"report.md"</span>, <span class="s">"report.pdf"</span>)
+md2office.<span class="f">to_pdf</span>(<span class="s">"report.md"</span>, <span class="s">"report.pdf"</span>, template=<span class="s">"template.dotx"</span>)
 
 <span class="c"># fine-grained control</span>
 <span class="k">from</span> <span class="n">md2office</span> <span class="k">import</span> <span class="n">ConvertOptions</span>, <span class="n">to_pdf</span>
 
-opts = <span class="n">ConvertOptions</span>(number_sections=<span class="k">True</span>, font=<span class="s">"arial"</span>,
+opts = <span class="n">ConvertOptions</span>(template=<span class="s">"template.dotx"</span>,
+                           number_sections=<span class="k">True</span>, font=<span class="s">"arial"</span>,
                            page_breaks=<span class="s">"sections"</span>)
 <span class="n">to_pdf</span>(<span class="s">"report.md"</span>, <span class="s">"report.pdf"</span>, options=opts)
 </pre>

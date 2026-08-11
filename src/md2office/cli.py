@@ -10,6 +10,9 @@ from .engine import DEFAULT_CLASSIFICATION, ConvertOptions, doctor, to_docx, to_
 
 
 def _add_shared_options(parser: argparse.ArgumentParser) -> None:
+    parser.add_argument("--template",
+                        help="Word reference template (.docx/.dotx); "
+                             "defaults to pandoc's built-in reference document")
     parser.add_argument("--title", help="Document title (defaults to YAML frontmatter)")
     parser.add_argument("--classification", default=DEFAULT_CLASSIFICATION,
                         help=f"Sensitivity label in the header "
@@ -74,6 +77,7 @@ def _opts_from_args(args) -> ConvertOptions:
     return ConvertOptions(
         title=args.title or "",
         classification=args.classification,
+        template=args.template,
         author=args.author or "",
         version=args.version or "",
         effective_date=args.effective_date or "",
