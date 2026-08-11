@@ -1,0 +1,60 @@
+name: Sample document release
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            pandoc \
+            libreoffice-writer \
+            fonts-crosextra-carlito \
+            fonts-noto-color-emoji \
+            fonts-noto-core
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install package
+        run: pip install .
+
+      - name: Build sample document
+        run: |
+          mkdir -p dist
+          md2office pdf --keep-docx examples/sample.md dist/sample.pdf
+
+      - name: Verify artifacts
+        run: ls -la dist
+
+      - name: Publish to GitHub Releases
+        uses: softprops/action-gh-release@v2
+        with:
+          name: ${{ github.ref_name }}
+          body: |
+            Sample document built from `examples/sample.md` by the
+            sample-release CI workflow.
+
+            Artifacts:
+            - `sample.docx` — the Word document
+            - `sample.pdf`  — the PDF rendered by LibreOffice
+
+            Outputs are produced with md2office's default reference document.
+          files: |
+            dist/sample.docx
+            dist/sample.pdf
