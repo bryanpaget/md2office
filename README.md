@@ -1,4 +1,10 @@
+<div align="center">
+
+<img src="docs/favicon.svg" alt="md2office logo" width="96">
+
 # md2office
+
+</div>
 
 Convert Markdown to polished DOCX and PDF as a small reusable package.
 
