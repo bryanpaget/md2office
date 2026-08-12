@@ -118,7 +118,10 @@
     font-size: 0.8rem;
     color: var(--muted);
     margin-bottom: 24px;
+    text-decoration: none;
+    transition: border-color 0.2s ease;
   }
+  .pill:hover { border-color: var(--accent); color: var(--text); }
   .pill b { color: var(--accent-3); font-weight: 600; }
   h1 {
     font-size: clamp(2.2rem, 5vw, 3.6rem);
@@ -497,7 +500,7 @@
 
 <header class="hero" id="top">
   <div class="wrap">
-    <span class="pill"><b>v0.1.0</b> &nbsp;·&nbsp; Markdown to DOCX &amp; PDF</span>
+    <a class="pill" href="https://github.com/bryanpaget/md2office/releases/tag/v0.2.0" target="_blank" rel="noopener"><b>v0.2.0</b> &nbsp;·&nbsp; Markdown to DOCX &amp; PDF</a>
     <h1>Markdown in.<br><span class="grad">Polished DOCX &amp; PDF</span> out.</h1>
     <p class="sub">
       md2office turns a plain Markdown report into a Word document and PDF that look like they

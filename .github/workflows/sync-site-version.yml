@@ -1,0 +1,49 @@
+name: Sync site version
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout main
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Update version badge in site
+        run: |
+          python3 - <<'EOF'
+          import pathlib, re
+
+          p = pathlib.Path("docs/index.html")
+          t = p.read_text()
+          tag = "${{ github.ref_name }}"
+
+          # Update every vX.Y.Z occurrence (badge text and release-tag link).
+          updated, n = re.subn(r"v\d+\.\d+\.\d+", tag, t)
+          if n == 0:
+              raise SystemExit(f"no version to replace in {p}")
+          p.write_text(updated)
+          print(f"replaced {n} version occurrence(s) with {tag}")
+          EOF
+
+      - name: Commit and push
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add docs/index.html
+          if git diff --cached --quiet; then
+            echo "no changes; version already current"
+            exit 0
+          fi
+          git commit -m "chore: sync site version to ${{ github.ref_name }}"
+          git pull --rebase origin main
+          git push origin main
